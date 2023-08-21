@@ -79,7 +79,7 @@ webhook_user_agent = "PluginLab-Webhook-Delivery"
 plugin_url = "https://runcode-one.vercel.app"
 chatgpt_url = "https://chat.openai.com"
 compiler_url = "https://api.jdoodle.com/v1/execute"
-website_url = "https://code-runner-plugin.vercel.app"
+website_url = "runcode-one.vercel.app"
 discord_url = "https://discord.gg/BCRUpv4d6H"
 github_url = "https://github.com/haseeb-heaven/CodeRunner-Plugin"
 forms_url = "https://forms.gle/3z1e3aUJqeHcKh6y7"
@@ -878,7 +878,7 @@ async def privacy_policy():
 
 @app.route("/", methods=["GET"])
 async def root():
-    return redirect(website_url, code=302)
+    return quart.abort(404, "Page not found")
 
 
 @app.route("/robots.txt", methods=["GET"])
