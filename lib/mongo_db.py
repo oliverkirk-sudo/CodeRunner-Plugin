@@ -55,7 +55,7 @@ class MongoDB:
         self.DATA_API_URL = os.getenv("DATA_API_URL")
         self.MONGODB_URI = os.getenv("MONGODB_URI")
 
-    
+
     def _generate_file_name():
         return "".join(random.choice(string.ascii_letters) for i in range(10)) + ".py"
 

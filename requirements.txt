@@ -3,7 +3,7 @@ quart
 quart-cors
 python-dotenv
 pymongo
-
+pymongo[srv]
 # libraries for data analysis
 requests
 matplotlib

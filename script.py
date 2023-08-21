@@ -48,7 +48,6 @@ code_runner_basic_prompt = "https://chat.openai.com/share/0c2a154f-5df7-4976-8f8
 code_runner_graph_prompt = "https://chat.openai.com/share/3c24fa1a-6c58-4464-b8ac-700e292bff04"
 code_runner_interpreter_prompt = "https://chat.openai.com/share/7e74a92d-8640-438b-b10d-8d181bdbab11"
 code_runner_snippet_prompt = "https://chat.openai.com/share/1b61bc05-067b-4779-b208-a297534cba2b"
-
 # setting the database.
 global database
 database = None
@@ -914,7 +913,7 @@ def setup_database():
 if __name__ == "__main__":
     try:
         write_log("CodeRunner starting")
-        app.run()
+        app.run(debug=True)
         write_log("CodeRunner started")
     except Exception as e:
         write_log(str(e))
