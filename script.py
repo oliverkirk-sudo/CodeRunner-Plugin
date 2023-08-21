@@ -30,7 +30,6 @@ from lib.kod import Kodso
 
 # Webhook user agent by PluginLab.
 webhook_user_agent = "PluginLab-Webhook-Delivery"
-
 # defining the url's
 plugin_url = "https://runcode-one.vercel.app"
 chatgpt_url = "https://chat.openai.com"
