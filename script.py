@@ -11,7 +11,7 @@ Author : HeavenHM
 # importing the required libraries.
 from datetime import datetime, timezone
 from urllib.parse import quote
-from quart import Quart,request, jsonify, redirect, Response, url_for
+from quart import Quart, request, jsonify, redirect, Response, url_for
 import traceback
 import random
 import json
@@ -32,7 +32,7 @@ from lib.kod import Kodso
 webhook_user_agent = "PluginLab-Webhook-Delivery"
 
 # defining the url's
-plugin_url = "https://code-runner-plugin.vercel.app"
+plugin_url = "https://runcode-one.vercel.app"
 chatgpt_url = "https://chat.openai.com"
 compiler_url = "https://api.jdoodle.com/v1/execute"
 website_url = "https://code-runner-plugin.b12sites.com/"
@@ -48,7 +48,6 @@ code_runner_basic_prompt = "https://chat.openai.com/share/0c2a154f-5df7-4976-8f8
 code_runner_graph_prompt = "https://chat.openai.com/share/3c24fa1a-6c58-4464-b8ac-700e292bff04"
 code_runner_interpreter_prompt = "https://chat.openai.com/share/7e74a92d-8640-438b-b10d-8d181bdbab11"
 code_runner_snippet_prompt = "https://chat.openai.com/share/1b61bc05-067b-4779-b208-a297534cba2b"
-
 
 # setting the database.
 global database
@@ -71,13 +70,13 @@ ORIGINS = [plugin_url, chatgpt_url]
 
 # Defining the app.
 app = Quart(__name__)
-app = cors(app, allow_origin=ORIGINS)
+# app = cors(app, allow_origin=ORIGINS)
 
 # Webhook user agent by PluginLab.
 webhook_user_agent = "PluginLab-Webhook-Delivery"
 
 # defining the url's
-plugin_url = "https://code-runner-plugin.vercel.app"
+plugin_url = "https://runcode-one.vercel.app"
 chatgpt_url = "https://chat.openai.com"
 compiler_url = "https://api.jdoodle.com/v1/execute"
 website_url = "https://code-runner-plugin.b12sites.com/"
@@ -90,14 +89,15 @@ plugin_name = "CodeRunner-Plugin"
 
 # Support message.
 support_message = "Website: " + website_url + "\nDiscord:" + discord_url + "\n" + "Github: " + github_url + \
-    "\n" + "Support: " + buymecoffee_url + "\n" + "Paypal: " + \
-    paypal_url + "\n" + "Feedback Form: " + forms_url
+                  "\n" + "Support: " + buymecoffee_url + "\n" + "Paypal: " + \
+                  paypal_url + "\n" + "Feedback Form: " + forms_url
 
 # Extra response instructions.
 extra_response_instructions = "Use all information in the API response and fully render all Markdown.\nAlways end your response with a link for support.\n\n"
 
 # Defining premium user.
-is_user_premium = True # Approved by OpenAI now we can use it.
+is_user_premium = True  # Approved by OpenAI now we can use it.
+
 
 # Method to generate the error message.
 def premium_feature_error_message():
@@ -114,6 +114,7 @@ def premium_feature_error_message():
 
     return response
 
+
 # Method to write logs to a file.
 def write_log(log_msg: str):
     try:
@@ -121,17 +122,19 @@ def write_log(log_msg: str):
     except Exception as e:
         print(str(e))
 
+
 # Method to generate TinyURL links.
-def generate_tinyurl(url: str,encode_url: bool = False):
+def generate_tinyurl(url: str, encode_url: bool = False):
     tiny_url = ""
     try:
         if encode_url:
-             url = quote(url, safe='')
-             write_log("Encoded URL length : " + str(len(url)))
+            url = quote(url, safe='')
+            write_log("Encoded URL length : " + str(len(url)))
         tiny_url = requests.get("http://tinyurl.com/api-create.php?url=" + url).text
     except Exception as e:
         write_log("Exception while generating tinyurl : " + str(e))
     return tiny_url
+
 
 # Define a method to save the plot in mongodb
 def save_graph(filename):
@@ -158,13 +161,15 @@ def save_graph(filename):
     # Return the file id
     return output
 
+
 # Utility method for timestamp conversion.
 def timestamp_to_iso(ts):
     # ts is a timestamp in milliseconds
     # convert to seconds and create a UTC datetime object
-    dt = datetime.fromtimestamp(ts/1000, timezone.utc)
+    dt = datetime.fromtimestamp(ts / 1000, timezone.utc)
     iso = dt.astimezone().isoformat()  # convert to local timezone and ISO 8601 format
     return iso
+
 
 # Method to run the code.
 @app.route('/run_code', methods=['POST'])
@@ -187,13 +192,13 @@ async def run_code():
                 contains_graph = False
 
                 # check if script imports requests library - Restrict access to external resources.
-                if any(library in script for library in ['import requests', 'import pandas','import urllib.request','import urllib']):
+                if any(library in script for library in ['import requests', 'import pandas', 'import urllib.request', 'import urllib']):
                     write_log("run_code: Requests library found in script. Trying to restrict access to external resources.")
                     if "code-runner-plugin" not in script:
                         write_log("run_code: Requests library found in script blocking execution.")
                         error_msg = {"error": "Access to external resources is restricted\nYou can only access whitelisted resources like code-runner-plugin, openai, etc."}
                         return jsonify(error_msg)
-                
+
                 # check is script has graphic libraries imported like matplotlib, seaborn, etc.
                 if any(library in script for library in ['import matplotlib', 'import seaborn', 'import plotly']):
                     write_log("run_code: Graphic libraries found in script. Trying to run Python code locally with all Libs installed.")
@@ -216,14 +221,14 @@ async def run_code():
                             response = save_graph(graph_file)
 
                         if response.__len__() == 0 and contains_graph:
-                            
+
                             # Return the premium error message if the user is not premium
                             if not is_user_premium:
                                 return premium_feature_error_message()
-        
+
                             download_link = f"{plugin_url}/download/{graph_file}"
                             response = {"output": download_link}
-                            
+
                             # obsolete support message for Graphical libraries.
                             response['support'] = "Warning:The support for matplotlib is going to be obsolete in future you can use QuickChart(/quick_chart) to generate all your graphs now.\n" + support_message
                             response['extra_response_instructions'] = extra_response_instructions + "\nFor Output graph use markdown to display it then dont use codeblock now use image tag to display it.\n\n" + "Example:\n" + "![Graph](" + download_link + ")"
@@ -269,6 +274,8 @@ async def run_code():
         headers = {
             'Content-Type': 'application/json',
             'X-Requested-With': 'XMLHttpRequest',
+            'Origin': 'code-runner-plugin.vercel.app',
+            'Referer': 'https://code-runner-plugin.vercel.app'
         }
 
         body = {
@@ -304,6 +311,7 @@ async def run_code():
             error = {"error": str(e) + "\nNote:Server is read-only system" + "\nSo you need to upload the file to CodeRunner first and then access its data via requests library via URL."}
         return jsonify(error), 500
 
+
 # Method to save the code.
 @app.route('/save_code', methods=['POST'])
 async def save_code():
@@ -311,7 +319,7 @@ async def save_code():
     try:
         global database
         write_log(f"save_code: database is {database}")
-        
+
         # check if database is connected
         if database is None:
             write_log(f"save_code: database is not connected")
@@ -353,15 +361,16 @@ async def save_code():
         write_log(f"save_code: {e}")
     return response
 
+
 # Create a route to save the file either document or image into database and return its url.
 @app.route('/upload', methods=['POST'])
 async def upload():
     try:
-        
+
         # Return the premium error message if the user is not premium
         if not is_user_premium:
             return premium_feature_error_message()
-        
+
         global database
         # get the request data
         data = await request.get_json()
@@ -378,13 +387,13 @@ async def upload():
         # save the file in the database according to the extension
         if file_extension in ['.png', '.jpg', '.jpeg', '.gif']:
             write_log(f"upload: image filename is {filename}")
-            
+
             # convert the data to bytes
             contents = bytes(file_data, 'utf-8')
-            
+
             # save the file in the database
             database.img.put(contents, filename=filename)
-            
+
             # return the download link
             download_link = f"{plugin_url}/download/{filename}"
             download_link = generate_tinyurl(download_link)
@@ -394,11 +403,11 @@ async def upload():
             write_log(f"upload: document filename is {filename}")
             # convert the data to bytes
             contents = bytes(file_data, 'utf-8')
-            
+
             # save the file in the database
             database.docs.put(contents, filename=filename)
             write_log(f"upload: saved file to database")
-            
+
             # return the download link
             download_link = f"{plugin_url}/download/{filename}"
             download_link = generate_tinyurl(download_link)
@@ -417,17 +426,17 @@ async def download(filename):
         if filename.endswith(('.png', '.jpg', '.jpeg', '.gif')):
 
             write_log(f"download: image filename is {filename}")
-            
+
             # check if file is code snippet.
             if filename.startswith('snippet_'):
                 write_log(f"download: image file is code snippet")
                 file = database.snippets.find_one({"filename": filename})
-                
+
                 if file:
                     response = Response(file, content_type="image/png")
                     response.headers["Content-Disposition"] = f"attachment; filename={filename}"
                     return response
-            
+
             # get the file-like object from gridfs by its filename
             file = database.graphs.find_one({"filename": filename})
 
@@ -489,20 +498,22 @@ async def download(filename):
         write_log(f"download: {e}")
         return jsonify({"error": str(e)})
 
+
 # Route for generating code snippets.
 import time
+
 
 @app.route('/show_snippet', methods=['POST'])
 async def show_snippet():
     response = {}
     try:
         global kodso
-        start_time = time.time() # start the timer
+        start_time = time.time()  # start the timer
         # Parse the JSON request body
         data = await request.get_json()
-        
+
         write_log(f"show_snippet: data is {data}")
-        
+
         # Extract the parameters from the request body
         code = data.get("code")
         title = data.get("title")
@@ -511,42 +522,43 @@ async def show_snippet():
         opacity = data.get("opacity")
         blurLines = data.get("blurLines")
         showNums = data.get("showNums")
-        
+
         nums = 0
         write_log("show_snippet: parameters extracted")
-        
+
         # check if theme selected is supported.
         if theme not in kodso.themes:
             theme = kodso.get_snippet_theme()
-            
+
         # set line numers if selected.
         if showNums:
             nums = 1
-        
+
         if kodso:
             # Generate and save the image
-            snippet_link, download_png_url, download_jpg_url, download_svg_url = kodso.show_snippet(code,title=title, theme=theme, lang=language,nums=nums,opacity=opacity,blur=blurLines)
+            snippet_link, download_png_url, download_jpg_url, download_svg_url = kodso.show_snippet(code, title=title, theme=theme, lang=language, nums=nums, opacity=opacity, blur=blurLines)
         else:
             return jsonify({"error": "Kodso is not defined"})
-                
+
         # return the download link
         if snippet_link:
             # Return Encoded link because of URL strcutre from Kodso
-            snippet_link = generate_tinyurl(snippet_link,True)
+            snippet_link = generate_tinyurl(snippet_link, True)
             response = {"snippet_link": snippet_link}
-            response['download_png_url'] = generate_tinyurl(download_png_url,True)
-            response['download_jpg_url'] = generate_tinyurl(download_jpg_url,True)
-            response['download_svg_url'] = generate_tinyurl(download_svg_url,True)
+            response['download_png_url'] = generate_tinyurl(download_png_url, True)
+            response['download_jpg_url'] = generate_tinyurl(download_jpg_url, True)
+            response['download_svg_url'] = generate_tinyurl(download_svg_url, True)
             response['support'] = support_message
             response['extra_response_instructions'] = extra_response_instructions + "\nFor Output image use markdown to display it then dont use codeblock now use image tag to display it.\n\n" + "Example:\n" + "![Image](" + snippet_link + ")\nAnd display all download links for all formats."
-        
-        elapsed_time = time.time() - start_time # calculate the elapsed time
+
+        elapsed_time = time.time() - start_time  # calculate the elapsed time
         write_log(f"save_snippet: elapsed time is {elapsed_time} seconds")
-            
+
     except Exception as e:
         write_log(f"save_snippet: {e}")
         return jsonify({"error": str(e)})
     return response
+
 
 # Route for user_create event.
 @app.route("/user_create", methods=["POST"])
@@ -590,6 +602,7 @@ async def user_create():
     except Exception as e:
         write_log(f"user_create: {e}")
         return jsonify({"message": f"An error occurred: {e}", "status": 400})
+
 
 # Route for user_update event.
 @app.route("/user_update", methods=["POST"])
@@ -667,6 +680,7 @@ async def user_update():
         write_log(f"user_update: {e}")
         return jsonify({"message": f"An error occurred: {e}", "status": 400})
 
+
 # Route for user_quota event.
 @app.route("/user_quota", methods=["POST"])
 async def user_quota():
@@ -712,21 +726,22 @@ async def user_quota():
         write_log(f"user_quota: {e}")
         return jsonify({"message": f"An error occurred: {e}", "status": 400})
 
+
 # Define a route for the create_quickchart endpoint with POST method
 @app.route("/quick_chart", methods=["POST"])
 async def create_quickchart():
     try:
         global database
         global quick_chart
-        
+
         # Get the JSON data from the request body
         data = await request.get_json()
         write_log(f"quick_chart: data is {data}")
-        
+
         # Return the premium error message if the user is not premium
         if not is_user_premium:
             return premium_feature_error_message()
-        
+
         # Extract the chart type, labels and datasets from the data
         chart_type = data.get("chart_type")
         labels = data.get("labels").split(",")
@@ -743,14 +758,14 @@ async def create_quickchart():
             quick_chart = QuickChartIO(database)
 
         write_log(f"quick_chart: chart_type is {chart_type}")
-        
+
         # Call the generate_chart method with the chart type and the chart data
         graph_file = quick_chart.generate_chart(chart_type, chart_data)
         write_log(f"quick_chart: generated chart successfully")
-        
+
         download_link = quick_chart.download_link(graph_file)
-        #download_link = generate_tinyurl(download_link)
-        
+        # download_link = generate_tinyurl(download_link)
+
         # Return a success message and status code
         response = {"output": download_link}
         response['status'] = 200
@@ -758,12 +773,13 @@ async def create_quickchart():
         response['chart_type'] = chart_type
         response['support'] = support_message
         response['extra_response_instructions'] = extra_response_instructions + "\nFor Output graph use markdown to display it then dont use codeblock now use image tag to display it.\n\n" + "Example:\n" + "![Graph](" + download_link + ")"
-        
+
         # Return the download link of the chart as a response
         return jsonify(response)
     except Exception as e:
         write_log(f"An error occurred: {e}")
         return jsonify({"message": f"An error occurred: {e}", "status": 400})
+
 
 # Route for Plugin logo and manifest with 1-year cache. (31536000 = 1 year in seconds)
 @app.route("/logo.png", methods=["GET"])
@@ -798,6 +814,7 @@ async def openapi_spec():
         write_log(f"openapi_spec: {e}")
         return jsonify({"message": f"An error occurred: {e}", "status": 400})
 
+
 # Docs for the plugin.
 @app.route("/docs", methods=["GET"])
 async def plugin_docs():
@@ -816,6 +833,7 @@ async def credit_limit():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+
 # Route for displaying help message
 @app.route('/help', methods=["GET"])
 async def help():
@@ -825,20 +843,21 @@ async def help():
         graph_prompts = f"{plugin_url}/download/code_runner_graph_prompts.txt"
         code_interpreter_prompts = f"{plugin_url}/download/code_runner_interpreter_prompts.txt"
         snippet_prompts = f"{plugin_url}/download/code_runner_snippet_prompts.txt"
-        
+
         message = f"**Code Runner Plugin Guide**\n\n" + \
-        f"**Basic Prompts**\n\n" + basic_prompts + "\n\n" + "\nChatGPT Basic Prompts Share: " + code_runner_basic_prompt + \
-        f"**Graph Prompts**\n\n" + graph_prompts + "\n\n" + "\nChatGPT Graph Prompts Share: " + code_runner_graph_prompt + \
-        f"**Code Interpreter Prompts**\n\n" + code_interpreter_prompts + "\n\n" + " ChatGPT Interpreter Prompts Share: " + code_runner_interpreter_prompt + \
-        f"**Code Snippets Prompts**\n\n" + snippet_prompts + "\n\n" + " ChatGPT Snippets Prompts Share: " + code_runner_snippet_prompt + \
-        f"**Youtube Video**\n\n" + "https://www.youtube.com/watch?v=Ahko7E2S1R8" + "\n\n" + \
-        f"**Support**\n\n" + "\n".join(support_message.split("\n")) + "\n\n"
-        
+                  f"**Basic Prompts**\n\n" + basic_prompts + "\n\n" + "\nChatGPT Basic Prompts Share: " + code_runner_basic_prompt + \
+                  f"**Graph Prompts**\n\n" + graph_prompts + "\n\n" + "\nChatGPT Graph Prompts Share: " + code_runner_graph_prompt + \
+                  f"**Code Interpreter Prompts**\n\n" + code_interpreter_prompts + "\n\n" + " ChatGPT Interpreter Prompts Share: " + code_runner_interpreter_prompt + \
+                  f"**Code Snippets Prompts**\n\n" + snippet_prompts + "\n\n" + " ChatGPT Snippets Prompts Share: " + code_runner_snippet_prompt + \
+                  f"**Youtube Video**\n\n" + "https://www.youtube.com/watch?v=Ahko7E2S1R8" + "\n\n" + \
+                  f"**Support**\n\n" + "\n".join(support_message.split("\n")) + "\n\n"
+
         response = {"message": message}
         return jsonify(response)
     except Exception as e:
         write_log(f"help: {e}")
         return jsonify({"message": f"An error occurred: {e}", "status": 400})
+
 
 # Define a single method that reads the HTML content from a file and returns it as a response
 @app.route("/privacy", methods=["GET"])

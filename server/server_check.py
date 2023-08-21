@@ -8,7 +8,8 @@ from datetime import date, datetime
 logging.basicConfig(filename='server/server_log.txt', level=logging.INFO, format='%(asctime)s %(message)s')
 
 # Define the server URL
-server_url = 'https://code-runner-plugin.vercel.app/credit_limit'
+server_url = 'https://runcode-one.vercel.app/credit_limit'
+
 
 # Define a function to check the server status and record the downtime
 def check_server():
@@ -68,7 +69,7 @@ def check_server():
                     # Get the minutes and seconds from the downtime using divmod()
                     minutes, seconds = divmod(downtime, 60)
                     # Log the downtime message with date and time and formatted minutes and seconds
-                    #logging.info(f'Server has been down for {minutes:.0f} minutes and {seconds:.0f} seconds.')
+                    # logging.info(f'Server has been down for {minutes:.0f} minutes and {seconds:.0f} seconds.')
 
         except Exception as e:
             # Log the exception message
@@ -88,6 +89,7 @@ def check_server():
     # Return the total downtime in seconds
     return total_downtime
 
+
 # Define a main function to run the program
 def main():
     # Call the check_server function and get the result
@@ -97,6 +99,7 @@ def main():
     # Print the result in the desired format
     print(f'Total downtime: {int(minutes)} minutes {int(seconds)} seconds.')
 
-# Check if this file is executed as a script and call the main function if so    
+
+# Check if this file is executed as a script and call the main function if so
 if __name__ == '__main__':
     main()

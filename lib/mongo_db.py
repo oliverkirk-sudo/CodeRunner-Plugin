@@ -9,7 +9,7 @@ from pymongo import MongoClient
 from gridfs import GridFS
 from typing import Optional
 import base64
-plugin_url = "https://code-runner-plugin.vercel.app"
+plugin_url = "https://runcode-one.vercel.app"
 
 #Creating MongoDB connector class
 class MongoDB:

@@ -20,7 +20,7 @@ import io
 webhook_user_agent = "PluginLab-Webhook-Delivery"
 
 # defining the url's
-plugin_url = "https://code-runner-plugin.vercel.app"
+plugin_url = "https://runcode-one.vercel.app"
 chatgpt_url = "https://chat.openai.com"
 compiler_url = "https://api.jdoodle.com/v1/execute"
 website_url = "https://code-runner-plugin.b12sites.com/"
@@ -56,7 +56,7 @@ async def startup():
 webhook_user_agent = "PluginLab-Webhook-Delivery"
 
 # defining the url's
-plugin_url = "https://code-runner-plugin.vercel.app"
+plugin_url = "https://runcode-one.vercel.app"
 chatgpt_url = "https://chat.openai.com"
 compiler_url = "https://api.jdoodle.com/v1/execute"
 website_url = "https://code-runner-plugin.b12sites.com/"

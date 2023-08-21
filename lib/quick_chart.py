@@ -14,7 +14,7 @@ import gridfs
 
 class QuickChartIO:
     base_url = "https://quickchart.io/chart"
-    plugin_url = "https://code-runner-plugin.vercel.app"
+    plugin_url = "https://runcode-one.vercel.app"
     database = None
     
     # Constructor to initialize the base URL and the log file name
