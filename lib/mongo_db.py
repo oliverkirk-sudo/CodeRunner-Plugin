@@ -10,9 +10,11 @@ from pymongo.server_api import ServerApi
 from gridfs import GridFS
 from typing import Optional
 import base64
+from config import Config
 
-plugin_url = "https://runcode-one.vercel.app"
-dataset = 'Cluster0'
+config = Config()
+plugin_url = config.proxydomain
+dataset = config.dbname
 
 
 # Creating MongoDB connector class

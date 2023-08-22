@@ -1,40 +1,30 @@
-"""
-Description: This is ChatGPT Plugin for CodeRunner. Which can run and save code in 70+ languages.
-And can genrate graphs and plots for data science and machine learning.
-This has also support for managing files and documents.
-Server API : Quart.
-Language: Python.
-Date: 19/07/2023.
-Author : HeavenHM
-"""
-
 # importing the required libraries.
 from datetime import datetime, timezone
 from urllib.parse import quote
 from quart import Quart, request, jsonify, redirect, Response, url_for
 import traceback
-import random
-import json
 import quart
-import requests
 import os
-import io
 import gridfs
 from pathlib import Path
+
+from quart_cors import cors
+
 from lib.mongo_db import MongoDB
 from lib.python_runner import *
 from lib.jdoodle_api import *
-from quart_cors import cors
 from lib.quick_chart import QuickChartIO
 from lib.kod import Kodso
+from config import Config
 
+config = Config()
 # Webhook user agent by PluginLab.
 webhook_user_agent = "PluginLab-Webhook-Delivery"
 # defining the url's
-plugin_url = "https://runcode-one.vercel.app"
+plugin_url = config.proxydomain
 chatgpt_url = "https://chat.openai.com"
 compiler_url = "https://api.jdoodle.com/v1/execute"
-website_url = "https://code-runner-plugin.vercel.app"
+website_url = config.domain
 discord_url = "https://discord.gg/BCRUpv4d6H"
 github_url = "https://github.com/haseeb-heaven/CodeRunner-Plugin"
 forms_url = "https://forms.gle/3z1e3aUJqeHcKh6y7"
@@ -64,20 +54,21 @@ except Exception as e:
     print("Exception while connecting to the database : " + str(e))
 
 # defining the origin for CORS
-ORIGINS = [plugin_url, chatgpt_url]
+ORIGINS = [plugin_url]
 
 # Defining the app.
 app = Quart(__name__)
-# app = cors(app, allow_origin=ORIGINS)
+if config.CORS:
+    app = cors(app, allow_origin=ORIGINS)
 
 # Webhook user agent by PluginLab.
 webhook_user_agent = "PluginLab-Webhook-Delivery"
 
 # defining the url's
-plugin_url = "https://runcode-one.vercel.app"
+plugin_url = config.proxydomain
 chatgpt_url = "https://chat.openai.com"
 compiler_url = "https://api.jdoodle.com/v1/execute"
-website_url = "runcode-one.vercel.app"
+website_url = config.domain
 discord_url = "https://discord.gg/BCRUpv4d6H"
 github_url = "https://github.com/haseeb-heaven/CodeRunner-Plugin"
 forms_url = "https://forms.gle/3z1e3aUJqeHcKh6y7"
