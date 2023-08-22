@@ -12,9 +12,12 @@ import random
 from datetime import datetime
 import gridfs
 
+import config
+
+
 class QuickChartIO:
     base_url = "https://quickchart.io/chart"
-    plugin_url = "https://runcode-one.vercel.app"
+    plugin_url = config.Config().proxydomain
     database = None
     
     # Constructor to initialize the base URL and the log file name
