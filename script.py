@@ -342,7 +342,7 @@ async def save_code():
         write_log(f"save_code: download link is {download_link}")
 
         if download_link:
-            download_link = generate_tinyurl(download_link)
+            # download_link = generate_tinyurl(download_link)
             response = {"link": download_link}
             # response['support'] = support_message
             response['extra_response_instructions'] = extra_response_instructions
@@ -385,7 +385,7 @@ async def upload():
 
             # return the download link
             download_link = f"{plugin_url}/download/{filename}"
-            download_link = generate_tinyurl(download_link)
+            # download_link = generate_tinyurl(download_link)
             return jsonify({"link": download_link})
 
         elif file_extension in ['.pdf', '.doc', '.docx', '.csv', '.xls', '.xlsx', '.txt', '.json']:
@@ -399,7 +399,7 @@ async def upload():
 
             # return the download link
             download_link = f"{plugin_url}/download/{filename}"
-            download_link = generate_tinyurl(download_link)
+            # download_link = generate_tinyurl(download_link)
             return jsonify({"link": download_link})
     except Exception as e:
         write_log(f"upload: {e}")
@@ -532,11 +532,14 @@ async def show_snippet():
         # return the download link
         if snippet_link:
             # Return Encoded link because of URL strcutre from Kodso
-            snippet_link = generate_tinyurl(snippet_link, True)
+            # snippet_link = generate_tinyurl(snippet_link, True)
             response = {"snippet_link": snippet_link}
-            response['download_png_url'] = generate_tinyurl(download_png_url, True)
-            response['download_jpg_url'] = generate_tinyurl(download_jpg_url, True)
-            response['download_svg_url'] = generate_tinyurl(download_svg_url, True)
+            # response['download_png_url'] = generate_tinyurl(download_png_url, True)
+            # response['download_jpg_url'] = generate_tinyurl(download_jpg_url, True)
+            # response['download_svg_url'] = generate_tinyurl(download_svg_url, True)
+            response['download_png_url'] = download_png_url
+            response['download_jpg_url'] = download_jpg_url
+            response['download_svg_url'] = download_svg_url
             # response['support'] = support_message
             response['extra_response_instructions'] = extra_response_instructions + "\nFor Output image use markdown to display it then dont use codeblock now use image tag to display it.\n\n" + "Example:\n" + "![Image](" + snippet_link + ")\nAnd display all download links for all formats."
 
