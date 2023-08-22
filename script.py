@@ -511,7 +511,6 @@ async def show_snippet():
         opacity = data.get("opacity")
         blurLines = data.get("blurLines")
         showNums = data.get("showNums")
-
         nums = 0
         write_log("show_snippet: parameters extracted")
 
