@@ -39,7 +39,6 @@ class Kodso:
 			"theme": "nord",
 			"codeFontName": "fira-code",
 			"tabSize": 4,
-			"watermark": "Code Runner Plugin",
 			"menuColor": 0,
 			"paddingtb": 15,
 			"paddinglr": 15,
