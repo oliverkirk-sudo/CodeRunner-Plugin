@@ -525,7 +525,7 @@ async def show_snippet():
 
         if kodso:
             # Generate and save the image
-            snippet_link, download_png_url, download_jpg_url, download_svg_url = kodso.show_snippet(code, title=title, theme=theme, lang=language, nums=nums, opacity=opacity, blur=blurLines)
+            snippet_link, download_png_url, download_jpg_url, download_svg_url = kodso.show_snippet(code=code, title=title, theme=theme, lang=language, nums=nums, opacity=opacity, blur=blurLines)
         else:
             return jsonify({"error": "Kodso is not defined"})
 
@@ -910,3 +910,16 @@ if __name__ == "__main__":
         write_log("CodeRunner started")
     except Exception as e:
         write_log(str(e))
+
+
+'''
+2023-08-22 09:16:59.332360 show_snippet: data is {'code': 'print("Hello World")', 'title': 'hello', 'theme': 'Monokai', 'language': 'python', 'opacity': 0.8, 'blurLines': '0', 'showNums': 'true'}
+2023-08-22 09:16:59.339411 show_snippet: parameters extracted
+2023-08-22 09:16:59.339452 An error occurred while getting the theme: 'Kodso' object has no attribute 'themes_list'
+2023-08-22 09:16:59.339473 save_snippet: method with code and kwargs: {'title': 'hello', 'theme': 'nord', 'lang': 'python', 'nums': 1, 'opacity': 0.8, 'blur': '0'}
+2023-08-22 09:16:59.339496 generate_snippet: method with code and kwargs: {'title': 'hello', 'theme': 'nord', 'lang': 'python', 'nums': 1, 'opacity': 0.8, 'blur': '0'}
+2023-08-22 09:16:59.339509 generate_snippet: starting request to Kod.so API
+2023-08-22 09:17:00.134024 generate_snippet: An error occurred while generating the code: HTTPSConnectionPool(host='kod.so', port=443): Max retries exceeded with url: /gen?code=print%28%22Hello+World%22%29&num=1&title=hello&theme=nord&codeFontName=fira-code&tabSize=4&watermark=Code+Runner+Plugin&menuColor=0&paddingtb=15&paddinglr=15&header=0&background=miaka&opacity=0.8&lang=python&nums=1&blur=0 (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: certificate has expired (_ssl.c:1129)')))
+2023-08-22 09:17:00.134083 An error occurred while saving the code snippet to the database: unsupported operand type(s) for +: 'dict' and 'str'
+2023-08-22 09:17:00.134100 save_snippet: not enough values to unpack (expected 4, got 1)
+'''

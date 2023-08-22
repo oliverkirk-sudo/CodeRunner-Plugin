@@ -19,7 +19,7 @@ class Kodso:
 		# defining the api url
 		self.plugin_url = config.proxydomain
 		self.api_url = "https://kod.so/gen"
-		self.headers = {'Content-Type': 'application/json'}
+		self.headers = {'Content-Type': 'application/json', 'Referer': 'https://code-runner-plugin.vercel.app'}
 
 		# defining the themes list
 		self.themes = {
@@ -69,7 +69,7 @@ class Kodso:
 			self.write_log(f"generate_snippet: starting request to Kod.so API")
 
 			# Send the request to the Kod.so API
-			response = requests.get(self.api_url, headers=self.headers, params=self.params)
+			response = requests.get(self.api_url, headers=self.headers, params=self.params,verify=False)
 			self.write_log(f"generate_snippet: request to Kod.so API completed")
 
 			if response.status_code == 200:
