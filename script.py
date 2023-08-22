@@ -82,7 +82,7 @@ support_message = "Website: " + website_url + "\nDiscord:" + discord_url + "\n" 
                   paypal_url + "\n" + "Feedback Form: " + forms_url
 
 # Extra response instructions.
-extra_response_instructions = "Use all information in the API response and fully render all Markdown.\nAlways end your response with a link for support.\n\n"
+extra_response_instructions = "Use all information in the API response and fully render all Markdown.\n\n"
 
 # Defining premium user.
 is_user_premium = True  # Approved by OpenAI now we can use it.
@@ -98,7 +98,7 @@ def premium_feature_error_message():
         }
     }
 
-    response['support'] = support_message
+    # response['support'] = support_message
     response['extra_response_instructions'] = extra_response_instructions
 
     return response
@@ -219,7 +219,7 @@ async def run_code():
                             response = {"output": download_link}
 
                             # obsolete support message for Graphical libraries.
-                            response['support'] = "Warning:The support for matplotlib is going to be obsolete in future you can use QuickChart(/quick_chart) to generate all your graphs now.\n" + support_message
+                            response['support'] = "Warning:The support for matplotlib is going to be obsolete in future you can use QuickChart(/quick_chart) to generate all your graphs now.\n"
                             response['extra_response_instructions'] = extra_response_instructions + "\nFor Output graph use markdown to display it then dont use codeblock now use image tag to display it.\n\n" + "Example:\n" + "![Graph](" + download_link + ")"
                             return response
                         else:
@@ -236,7 +236,7 @@ async def run_code():
                     response = {"output": response}
 
                 # Append the link to the discord and github repos.
-                response['support'] = support_message
+                # response['support'] = support_message
                 response['extra_response_instructions'] = extra_response_instructions
 
                 return jsonify(response)
@@ -288,7 +288,7 @@ async def run_code():
         # Append the discord and github URLs to the response.
         if response_data.status_code == 200:
             unique_id = generate_code_id(response)
-            response['support'] = support_message
+            # response['support'] = support_message
             response['id'] = unique_id
             response['extra_response_instructions'] = extra_response_instructions
 
@@ -344,7 +344,7 @@ async def save_code():
         if download_link:
             download_link = generate_tinyurl(download_link)
             response = {"link": download_link}
-            response['support'] = support_message
+            # response['support'] = support_message
             response['extra_response_instructions'] = extra_response_instructions
     except Exception as e:
         write_log(f"save_code: {e}")
@@ -537,7 +537,7 @@ async def show_snippet():
             response['download_png_url'] = generate_tinyurl(download_png_url, True)
             response['download_jpg_url'] = generate_tinyurl(download_jpg_url, True)
             response['download_svg_url'] = generate_tinyurl(download_svg_url, True)
-            response['support'] = support_message
+            # response['support'] = support_message
             response['extra_response_instructions'] = extra_response_instructions + "\nFor Output image use markdown to display it then dont use codeblock now use image tag to display it.\n\n" + "Example:\n" + "![Image](" + snippet_link + ")\nAnd display all download links for all formats."
 
         elapsed_time = time.time() - start_time  # calculate the elapsed time
@@ -760,7 +760,7 @@ async def create_quickchart():
         response['status'] = 200
         response['message'] = "Chart generated successfully"
         response['chart_type'] = chart_type
-        response['support'] = support_message
+        # response['support'] = support_message
         response['extra_response_instructions'] = extra_response_instructions + "\nFor Output graph use markdown to display it then dont use codeblock now use image tag to display it.\n\n" + "Example:\n" + "![Graph](" + download_link + ")"
 
         # Return the download link of the chart as a response
