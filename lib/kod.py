@@ -61,16 +61,14 @@ class Kodso:
 			self.write_log(f"generate_snippet: method with code and kwargs: {kwargs}")
 			# Update the default parameters with any additional parameters provided by the user
 			self.params.update(kwargs)
+			self.params['code'] = code
 
 			# Add the code parameter
 			self.write_log(f"{code}")
 
 			self.write_log(f"generate_snippet: starting request to Kod.so API")
-			gen_url = f'{self.api_url}?code={code}'
-			for i in self.params.keys():
-				gen_url += f'&{i}={self.params[i]}'
 			# Send the request to the Kod.so API
-			response = requests.get(gen_url, headers=self.headers, verify=False)
+			response = requests.get(self.api_url, headers=self.headers, params=self.params, verify=False)
 
 			self.write_log(f"generate_snippet: request to Kod.so API completed")
 

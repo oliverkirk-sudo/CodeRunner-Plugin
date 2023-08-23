@@ -492,14 +492,14 @@ async def download(filename):
 import time
 
 
-@app.route('/show_snippet', methods=['POST'])
+@app.route('/show_snippet', methods=['POST', 'GET'])
 async def show_snippet():
     response = {}
     try:
         global kodso
         start_time = time.time()  # start the timer
         # Parse the JSON request body
-        data = await request.get_json()
+        data = request.args
 
         write_log(f"show_snippet: data is {data}")
 
@@ -512,6 +512,7 @@ async def show_snippet():
         blurLines = data.get("blurLines")
         showNums = data.get("showNums")
         nums = 0
+        print(code)
         write_log("show_snippet: parameters extracted")
 
         # check if theme selected is supported.
@@ -530,16 +531,10 @@ async def show_snippet():
 
         # return the download link
         if snippet_link:
-            # Return Encoded link because of URL strcutre from Kodso
-            # snippet_link = generate_tinyurl(snippet_link, True)
             response = {"snippet_link": snippet_link}
-            # response['download_png_url'] = generate_tinyurl(download_png_url, True)
-            # response['download_jpg_url'] = generate_tinyurl(download_jpg_url, True)
-            # response['download_svg_url'] = generate_tinyurl(download_svg_url, True)
             response['download_png_url'] = download_png_url
             response['download_jpg_url'] = download_jpg_url
             response['download_svg_url'] = download_svg_url
-            # response['support'] = support_message
             response['extra_response_instructions'] = extra_response_instructions + "\nFor Output image use markdown to display it then do not use codeblock now use image tag to display it.\n\n" + "Example:\n" + "![Image](" + snippet_link + ")\nAnd display all download links for all formats."
 
         elapsed_time = time.time() - start_time  # calculate the elapsed time
@@ -628,7 +623,7 @@ async def user_update():
                 before_password = before_auth.get("password")
             else:
                 before_password = None
-                # before_password = generate_random_password()
+            # before_password = generate_random_password()
             # If the user has a password after the update, extract it
             if after_has_password:
                 after_password = after_auth.get("password")
@@ -909,7 +904,6 @@ if __name__ == "__main__":
         write_log("CodeRunner started")
     except Exception as e:
         write_log(str(e))
-
 
 '''
 2023-08-22 09:16:59.332360 show_snippet: data is {'code': 'print("Hello World")', 'title': 'hello', 'theme': 'Monokai', 'language': 'python', 'opacity': 0.8, 'blurLines': '0', 'showNums': 'true'}
