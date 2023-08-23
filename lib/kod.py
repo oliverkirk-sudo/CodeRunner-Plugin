@@ -63,12 +63,13 @@ class Kodso:
 			self.params.update(kwargs)
 
 			# Add the code parameter
-			code = quote(code, encoding='utf-8').replace("%20", "+")
+			codes = quote(code, encoding='utf-8').replace("%20", "+")
+			self.write_log(f"{codes}")
 
 			self.write_log(f"generate_snippet: starting request to Kod.so API")
 
 			# Send the request to the Kod.so API
-			response = requests.get(f'{self.api_url}?code={code}', headers=self.headers, params=self.params, verify=False)
+			response = requests.get(f'{self.api_url}?code={codes}', headers=self.headers, params=self.params, verify=False)
 
 			self.write_log(f"generate_snippet: request to Kod.so API completed")
 
