@@ -125,6 +125,7 @@ def generate_tinyurl(url: str, encode_url: bool = False):
         }
         data = {"url": url}
         tiny_url = requests.post("https://api.reurl.cc/shorten", json=data, headers=headers).json()["short_url"]
+        write_log("generating tinyurl : " + str(tiny_url))
     except Exception as e:
         write_log("Exception while generating tinyurl : " + str(e))
     return tiny_url
