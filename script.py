@@ -113,12 +113,9 @@ def write_log(log_msg: str):
 
 
 # Method to generate TinyURL links.
-def generate_tinyurl(url: str, encode_url: bool = False):
+def generate_tinyurl(url: str):
     tiny_url = ""
     try:
-        if encode_url:
-            url = quote(url, safe='')
-            write_log("Encoded URL length : " + str(len(url)))
         headers = {
             "Content-Type": "application/json",
             "reurl-api-key": os.getenv("REURL_API_KEY"),
@@ -536,11 +533,11 @@ async def show_snippet():
 
         # return the download link
         if snippet_link:
-            snippet_link = generate_tinyurl(snippet_link, True)
+            snippet_link = generate_tinyurl(snippet_link)
             response = {"snippet_link": snippet_link}
-            response['download_png_url'] = generate_tinyurl(download_png_url, True)
-            response['download_jpg_url'] = generate_tinyurl(download_jpg_url, True)
-            response['download_svg_url'] = generate_tinyurl(download_svg_url, True)
+            response['download_png_url'] = generate_tinyurl(download_png_url)
+            response['download_jpg_url'] = generate_tinyurl(download_jpg_url)
+            response['download_svg_url'] = generate_tinyurl(download_svg_url)
             response['extra_response_instructions'] = extra_response_instructions + "\nFor Output image use markdown to display it then do not use codeblock now use image tag to display it.\n\n" + "Example:\n" + "![Image](" + snippet_link + ")\nAnd display all download links for all formats."
 
         elapsed_time = time.time() - start_time  # calculate the elapsed time
