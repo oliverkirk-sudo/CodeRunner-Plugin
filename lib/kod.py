@@ -8,7 +8,7 @@ Website : https://kod.so/
 import requests
 from datetime import datetime
 import random
-
+from urllib.parse import quote
 from config import Config
 
 config = Config()
@@ -63,13 +63,13 @@ class Kodso:
 			self.params.update(kwargs)
 
 			# Add the code parameter
-			self.params["code"] = code
+			code = quote(code, encoding='utf-8').replace("%20", "+")
 
 			self.write_log(f"generate_snippet: starting request to Kod.so API")
 
 			# Send the request to the Kod.so API
-			response = requests.get(self.api_url, headers=self.headers, params=self.params, verify=False)
-			
+			response = requests.get(f'{self.api_url}?code={code}', headers=self.headers, params=self.params, verify=False)
+
 			self.write_log(f"generate_snippet: request to Kod.so API completed")
 
 			if response.status_code == 200:

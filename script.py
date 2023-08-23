@@ -82,7 +82,7 @@ support_message = "Website: " + website_url + "\nDiscord:" + discord_url + "\n" 
                   paypal_url + "\n" + "Feedback Form: " + forms_url
 
 # Extra response instructions.
-extra_response_instructions = "Use all information in the API response and fully render all Markdown.\n\n"
+extra_response_instructions = "Use all information in the API response and fully render all Markdown.\n"
 
 # Defining premium user.
 is_user_premium = True  # Approved by OpenAI now we can use it.
@@ -540,7 +540,7 @@ async def show_snippet():
             response['download_jpg_url'] = download_jpg_url
             response['download_svg_url'] = download_svg_url
             # response['support'] = support_message
-            response['extra_response_instructions'] = extra_response_instructions + "\nFor Output image use markdown to display it then dont use codeblock now use image tag to display it.\n\n" + "Example:\n" + "![Image](" + snippet_link + ")\nAnd display all download links for all formats."
+            response['extra_response_instructions'] = extra_response_instructions + "\nFor Output image use markdown to display it then do not use codeblock now use image tag to display it.\n\n" + "Example:\n" + "![Image](" + snippet_link + ")\nAnd display all download links for all formats."
 
         elapsed_time = time.time() - start_time  # calculate the elapsed time
         write_log(f"save_snippet: elapsed time is {elapsed_time} seconds")
