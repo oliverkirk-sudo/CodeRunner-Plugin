@@ -1,5 +1,5 @@
 # importing the required libraries.
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from urllib.parse import quote
 from quart import Quart, request, jsonify, redirect, Response, url_for
 import traceback
@@ -119,7 +119,12 @@ def generate_tinyurl(url: str, encode_url: bool = False):
         if encode_url:
             url = quote(url, safe='')
             write_log("Encoded URL length : " + str(len(url)))
-        tiny_url = requests.get("http://tinyurl.com/api-create.php?url=" + url).text
+        headers = {
+            "Content-Type": "application/json",
+            "reurl-api-key": os.getenv("REURL_API_KEY"),
+        }
+        data = {"url": url}
+        tiny_url = requests.post("https://api.reurl.cc/shorten", json=data, headers=headers).json()["short_url"]
     except Exception as e:
         write_log("Exception while generating tinyurl : " + str(e))
     return tiny_url
@@ -342,9 +347,8 @@ async def save_code():
         write_log(f"save_code: download link is {download_link}")
 
         if download_link:
-            # download_link = generate_tinyurl(download_link)
+            download_link = generate_tinyurl(download_link)
             response = {"link": download_link}
-            # response['support'] = support_message
             response['extra_response_instructions'] = extra_response_instructions
     except Exception as e:
         write_log(f"save_code: {e}")
@@ -385,7 +389,7 @@ async def upload():
 
             # return the download link
             download_link = f"{plugin_url}/download/{filename}"
-            # download_link = generate_tinyurl(download_link)
+            download_link = generate_tinyurl(download_link)
             return jsonify({"link": download_link})
 
         elif file_extension in ['.pdf', '.doc', '.docx', '.csv', '.xls', '.xlsx', '.txt', '.json']:
@@ -399,7 +403,7 @@ async def upload():
 
             # return the download link
             download_link = f"{plugin_url}/download/{filename}"
-            # download_link = generate_tinyurl(download_link)
+            download_link = generate_tinyurl(download_link)
             return jsonify({"link": download_link})
     except Exception as e:
         write_log(f"upload: {e}")
@@ -531,10 +535,11 @@ async def show_snippet():
 
         # return the download link
         if snippet_link:
+            snippet_link = generate_tinyurl(snippet_link, True)
             response = {"snippet_link": snippet_link}
-            response['download_png_url'] = download_png_url
-            response['download_jpg_url'] = download_jpg_url
-            response['download_svg_url'] = download_svg_url
+            response['download_png_url'] = generate_tinyurl(download_png_url, True)
+            response['download_jpg_url'] = generate_tinyurl(download_jpg_url, True)
+            response['download_svg_url'] = generate_tinyurl(download_svg_url, True)
             response['extra_response_instructions'] = extra_response_instructions + "\nFor Output image use markdown to display it then do not use codeblock now use image tag to display it.\n\n" + "Example:\n" + "![Image](" + snippet_link + ")\nAnd display all download links for all formats."
 
         elapsed_time = time.time() - start_time  # calculate the elapsed time
