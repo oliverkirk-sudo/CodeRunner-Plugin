@@ -67,9 +67,11 @@ class Kodso:
 			self.write_log(f"{codes}")
 
 			self.write_log(f"generate_snippet: starting request to Kod.so API")
-
+			gen_url = f'{self.api_url}?code={codes}'
+			for i in self.params.keys():
+				gen_url += f'&{i}={self.params[i]}'
 			# Send the request to the Kod.so API
-			response = requests.get(f'{self.api_url}?code={codes}', headers=self.headers, params=self.params, verify=False)
+			response = requests.get(gen_url, headers=self.headers, verify=False)
 
 			self.write_log(f"generate_snippet: request to Kod.so API completed")
 
