@@ -116,13 +116,9 @@ def write_log(log_msg: str):
 def generate_tinyurl(url: str):
     tiny_url = ""
     try:
-        headers = {
-            "Content-Type": "application/json",
-            "reurl-api-key": os.getenv("REURL_API_KEY"),
-        }
-        data = {"url": url}
-        tiny_url = requests.post("https://api.reurl.cc/shorten", json=data, headers=headers).json()["short_url"]
-        write_log("generating tinyurl : " + str(tiny_url))
+        data = {"url": url, "accesskey": os.getenv("ACCESS_KEY")}
+        tiny_url = requests.post("https://2u2.cc/api.php", data=data).json()["short_link"]
+        write_log("generating tinyurl : " + tiny_url)
     except Exception as e:
         write_log("Exception while generating tinyurl : " + str(e))
     return tiny_url
