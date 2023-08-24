@@ -117,7 +117,7 @@ def generate_tinyurl(url: str):
     tiny_url = ""
     try:
         data = {"url": url, "accesskey": os.getenv("ACCESS_KEY")}
-        tiny_url = requests.post("https://2u2.cc/api.php", data=data).json()["short_link"]
+        tiny_url = requests.post(config.api_url, data=data).json()["short_link"]
         write_log("generating tinyurl : " + tiny_url)
     except Exception as e:
         write_log("Exception while generating tinyurl : " + str(e))
