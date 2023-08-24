@@ -54,7 +54,7 @@ except Exception as e:
     print("Exception while connecting to the database : " + str(e))
 
 # defining the origin for CORS
-ORIGINS = [plugin_url]
+ORIGINS = [plugin_url,website_url]
 
 # Defining the app.
 app = Quart(__name__)
