@@ -4,3 +4,4 @@ class Config:
 		self.proxydomain = ""
 		self.dbname = ""
 		self.CORS = False
+		self.api_url = ""

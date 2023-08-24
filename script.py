@@ -1,5 +1,5 @@
 # importing the required libraries.
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from urllib.parse import quote
 from quart import Quart, request, jsonify, redirect, Response, url_for
 import traceback
@@ -82,7 +82,7 @@ support_message = "Website: " + website_url + "\nDiscord:" + discord_url + "\n" 
                   paypal_url + "\n" + "Feedback Form: " + forms_url
 
 # Extra response instructions.
-extra_response_instructions = "Use all information in the API response and fully render all Markdown.\n\n"
+extra_response_instructions = "Use all information in the API response and fully render all Markdown.\n"
 
 # Defining premium user.
 is_user_premium = True  # Approved by OpenAI now we can use it.
@@ -113,13 +113,12 @@ def write_log(log_msg: str):
 
 
 # Method to generate TinyURL links.
-def generate_tinyurl(url: str, encode_url: bool = False):
+def generate_tinyurl(url: str):
     tiny_url = ""
     try:
-        if encode_url:
-            url = quote(url, safe='')
-            write_log("Encoded URL length : " + str(len(url)))
-        tiny_url = requests.get("http://tinyurl.com/api-create.php?url=" + url).text
+        data = {"url": url, "accesskey": os.getenv("ACCESS_KEY")}
+        tiny_url = requests.post(config.api_url, data=data).json()["short_link"]
+        write_log("generating tinyurl : " + tiny_url)
     except Exception as e:
         write_log("Exception while generating tinyurl : " + str(e))
     return tiny_url
@@ -342,9 +341,8 @@ async def save_code():
         write_log(f"save_code: download link is {download_link}")
 
         if download_link:
-            # download_link = generate_tinyurl(download_link)
+            download_link = generate_tinyurl(download_link)
             response = {"link": download_link}
-            # response['support'] = support_message
             response['extra_response_instructions'] = extra_response_instructions
     except Exception as e:
         write_log(f"save_code: {e}")
@@ -385,7 +383,7 @@ async def upload():
 
             # return the download link
             download_link = f"{plugin_url}/download/{filename}"
-            # download_link = generate_tinyurl(download_link)
+            download_link = generate_tinyurl(download_link)
             return jsonify({"link": download_link})
 
         elif file_extension in ['.pdf', '.doc', '.docx', '.csv', '.xls', '.xlsx', '.txt', '.json']:
@@ -399,7 +397,7 @@ async def upload():
 
             # return the download link
             download_link = f"{plugin_url}/download/{filename}"
-            # download_link = generate_tinyurl(download_link)
+            download_link = generate_tinyurl(download_link)
             return jsonify({"link": download_link})
     except Exception as e:
         write_log(f"upload: {e}")
@@ -492,14 +490,14 @@ async def download(filename):
 import time
 
 
-@app.route('/show_snippet', methods=['POST'])
+@app.route('/show_snippet', methods=['POST', 'GET'])
 async def show_snippet():
     response = {}
     try:
         global kodso
         start_time = time.time()  # start the timer
         # Parse the JSON request body
-        data = await request.get_json()
+        data = request.args
 
         write_log(f"show_snippet: data is {data}")
 
@@ -511,8 +509,8 @@ async def show_snippet():
         opacity = data.get("opacity")
         blurLines = data.get("blurLines")
         showNums = data.get("showNums")
-
         nums = 0
+        print(code)
         write_log("show_snippet: parameters extracted")
 
         # check if theme selected is supported.
@@ -525,23 +523,18 @@ async def show_snippet():
 
         if kodso:
             # Generate and save the image
-            snippet_link, download_png_url, download_jpg_url, download_svg_url = kodso.show_snippet(code, title=title, theme=theme, lang=language, nums=nums, opacity=opacity, blur=blurLines)
+            snippet_link, download_png_url, download_jpg_url, download_svg_url = kodso.show_snippet(code=code, title=title, theme=theme, lang=language, nums=nums, opacity=opacity, blur=blurLines)
         else:
             return jsonify({"error": "Kodso is not defined"})
 
         # return the download link
         if snippet_link:
-            # Return Encoded link because of URL strcutre from Kodso
-            # snippet_link = generate_tinyurl(snippet_link, True)
+            snippet_link = generate_tinyurl(snippet_link)
             response = {"snippet_link": snippet_link}
-            # response['download_png_url'] = generate_tinyurl(download_png_url, True)
-            # response['download_jpg_url'] = generate_tinyurl(download_jpg_url, True)
-            # response['download_svg_url'] = generate_tinyurl(download_svg_url, True)
-            response['download_png_url'] = download_png_url
-            response['download_jpg_url'] = download_jpg_url
-            response['download_svg_url'] = download_svg_url
-            # response['support'] = support_message
-            response['extra_response_instructions'] = extra_response_instructions + "\nFor Output image use markdown to display it then dont use codeblock now use image tag to display it.\n\n" + "Example:\n" + "![Image](" + snippet_link + ")\nAnd display all download links for all formats."
+            response['download_png_url'] = generate_tinyurl(download_png_url)
+            response['download_jpg_url'] = generate_tinyurl(download_jpg_url)
+            response['download_svg_url'] = generate_tinyurl(download_svg_url)
+            response['extra_response_instructions'] = extra_response_instructions + "\nFor Output image use markdown to display it then do not use codeblock now use image tag to display it.\n\n" + "Example:\n" + "![Image](" + snippet_link + ")\nAnd display all download links for all formats."
 
         elapsed_time = time.time() - start_time  # calculate the elapsed time
         write_log(f"save_snippet: elapsed time is {elapsed_time} seconds")
@@ -629,7 +622,7 @@ async def user_update():
                 before_password = before_auth.get("password")
             else:
                 before_password = None
-                # before_password = generate_random_password()
+            # before_password = generate_random_password()
             # If the user has a password after the update, extract it
             if after_has_password:
                 after_password = after_auth.get("password")
