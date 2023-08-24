@@ -531,10 +531,10 @@ async def show_snippet():
         if snippet_link:
             snippet_link = generate_tinyurl(snippet_link)
             response = {"snippet_link": snippet_link}
-            response['download_png_url'] = generate_tinyurl(download_png_url)
-            response['download_jpg_url'] = generate_tinyurl(download_jpg_url)
-            response['download_svg_url'] = generate_tinyurl(download_svg_url)
-            response['extra_response_instructions'] = extra_response_instructions + "\nFor Output image use markdown to display it then do not use codeblock now use image tag to display it.\n\n" + "Example:\n" + "![Image](" + snippet_link + ")\nAnd display all download links for all formats."
+            # response['download_png_url'] = generate_tinyurl(download_png_url)
+            # response['download_jpg_url'] = generate_tinyurl(download_jpg_url)
+            # response['download_svg_url'] = generate_tinyurl(download_svg_url)
+            response['extra_response_instructions'] = extra_response_instructions + "\nFor Output image use image tag to display it.\n\n" + "Example:\n" + "![Image](" + snippet_link + ")\n."
 
         elapsed_time = time.time() - start_time  # calculate the elapsed time
         write_log(f"save_snippet: elapsed time is {elapsed_time} seconds")
