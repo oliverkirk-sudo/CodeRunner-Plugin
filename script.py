@@ -215,6 +215,7 @@ async def run_code():
                                 return premium_feature_error_message()
 
                             download_link = f"{plugin_url}/download/{graph_file}"
+                            download_link=generate_tinyurl(download_link)
                             response = {"output": download_link}
 
                             # obsolete support message for Graphical libraries.
@@ -749,7 +750,7 @@ async def create_quickchart():
         write_log(f"quick_chart: generated chart successfully")
 
         download_link = quick_chart.download_link(graph_file)
-        # download_link = generate_tinyurl(download_link)
+        download_link = generate_tinyurl(download_link)
 
         # Return a success message and status code
         response = {"output": download_link}
